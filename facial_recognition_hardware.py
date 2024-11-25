@@ -18,7 +18,7 @@ cap = cv2.VideoCapture("rtsp://peisen:peisen@192.168.113.39:554/stream2")
 output = LED(14)
 
 # Initialize our variables
-cv_scaler = 10 # this has to be a whole number
+cv_scaler = 4 # this has to be a whole number
 
 face_locations = []
 face_encodings = []
