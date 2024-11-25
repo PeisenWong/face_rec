@@ -1,7 +1,6 @@
 import face_recognition
 import cv2
 import numpy as np
-from picamera2 import Picamera2
 import time
 import pickle
 from gpiozero import LED
@@ -13,10 +12,7 @@ with open("encodings.pickle", "rb") as f:
 known_face_encodings = data["encodings"]
 known_face_names = data["names"]
 
-# Initialize the camera
-picam2 = Picamera2()
-picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (1920, 1080)}))
-picam2.start()
+cap = cv2.VideoCapture("rtsp://peisen:peisen@192.168.113.39:554/stream2")
 
 # Initialize GPIO
 output = LED(14)
@@ -32,7 +28,7 @@ start_time = time.time()
 fps = 0
 
 # List of names that will trigger the GPIO pin
-authorized_names = ["john", "alice", "bob"]  # Replace with names you wish to authorise THIS IS CASE-SENSITIVE
+authorized_names = ["peisen", "alice", "bob"]  # Replace with names you wish to authorise THIS IS CASE-SENSITIVE
 
 def process_frame(frame):
     global face_locations, face_encodings, face_names
@@ -68,7 +64,9 @@ def process_frame(frame):
     # Control the GPIO pin based on face detection
     if authorized_face_detected:
         output.on()  # Turn on Pin
+        print("Authorized")
     else:
+        print("Not authorized")
         output.off()  # Turn off Pin
     
     return frame
@@ -107,8 +105,15 @@ def calculate_fps():
     return fps
 
 while True:
+    if not cap.isOpened():
+        print("Error: Unable to open the camera.")
+        break
+    
     # Capture a frame from camera
-    frame = picam2.capture_array()
+    ret, frame = cap.read()
+    if not ret:
+        print("Failed to capture frame. Retrying...")
+        continue
     
     # Process the frame with the function
     processed_frame = process_frame(frame)

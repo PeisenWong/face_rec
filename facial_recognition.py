@@ -1,7 +1,6 @@
 import face_recognition
 import cv2
 import numpy as np
-from picamera2 import Picamera2
 import time
 import pickle
 
@@ -12,13 +11,10 @@ with open("encodings.pickle", "rb") as f:
 known_face_encodings = data["encodings"]
 known_face_names = data["names"]
 
-# Initialize the camera
-picam2 = Picamera2()
-picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (1920, 1080)}))
-picam2.start()
+cap = cv2.VideoCapture("rtsp://peisen:peisen@192.168.113.39:554/stream2")
 
 # Initialize our variables
-cv_scaler = 4 # this has to be a whole number
+cv_scaler = 1 # this has to be a whole number
 
 face_locations = []
 face_encodings = []
@@ -85,8 +81,15 @@ def calculate_fps():
     return fps
 
 while True:
+    if not cap.isOpened():
+        print("Error: Unable to open the camera.")
+        break
+    
     # Capture a frame from camera
-    frame = picam2.capture_array()
+    ret, frame = cap.read()
+    if not ret:
+        print("Failed to capture frame. Retrying...")
+        continue
     
     # Process the frame with the function
     processed_frame = process_frame(frame)
@@ -109,5 +112,5 @@ while True:
         break
 
 # By breaking the loop we run this code here which closes everything
+cap.release()
 cv2.destroyAllWindows()
-picam2.stop()
