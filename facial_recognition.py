@@ -14,7 +14,7 @@ known_face_names = data["names"]
 cap = cv2.VideoCapture("rtsp://peisen:peisen@192.168.113.39:554/stream2")
 
 # Initialize our variables
-cv_scaler = 1 # this has to be a whole number
+cv_scaler = 4 # this has to be a whole number
 
 face_locations = []
 face_encodings = []
@@ -84,7 +84,7 @@ while True:
     if not cap.isOpened():
         print("Error: Unable to open the camera.")
         break
-    
+
     # Capture a frame from camera
     ret, frame = cap.read()
     if not ret:
