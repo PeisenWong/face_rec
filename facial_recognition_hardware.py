@@ -65,10 +65,10 @@ def process_frame(frame):
     if authorized_face_detected:
         output.on()  # Turn on Pin
         print("Authorized: ")
+        print("Detected Names:", face_names)
         print(name)
     else:
         print("Not authorized: ")
-        print(name)
         output.off()  # Turn off Pin
     
     return frame
