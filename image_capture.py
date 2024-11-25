@@ -4,7 +4,7 @@ from datetime import datetime
 import time
 
 # Change this to the name of the person you're photographing
-PERSON_NAME = "jaryd"  
+PERSON_NAME = "peisen"  
 
 def create_folder(name):
     dataset_folder = "dataset"
@@ -27,9 +27,17 @@ def capture_photos(name):
     print(f"Taking photos for {name}. Press SPACE to capture, 'q' to quit.")
     cap = cv2.VideoCapture("rtsp://peisen:peisen@192.168.113.39:554/stream2")
     
+    if not cap.isOpened():
+        print("Error: Unable to open the camera.")
+        return
+    
     while True:
         
-        frame = cap.read()
+        ret, frame = cap.read()
+        if not ret:
+            print("Failed to capture frame. Retrying...")
+            continue
+
         # Display the frame
         cv2.imshow('Capture', frame)
         
@@ -47,8 +55,8 @@ def capture_photos(name):
             break
     
     # Clean up
-    cv2.destroyAllWindows()
     cap.release()
+    cv2.destroyAllWindows()
     print(f"Photo capture completed. {photo_count} photos saved for {name}.")
 
 if __name__ == "__main__":
