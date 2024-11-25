@@ -64,9 +64,11 @@ def process_frame(frame):
     # Control the GPIO pin based on face detection
     if authorized_face_detected:
         output.on()  # Turn on Pin
-        print("Authorized")
+        print("Authorized: ")
+        print(name)
     else:
-        print("Not authorized")
+        print("Not authorized: ")
+        print(name)
         output.off()  # Turn off Pin
     
     return frame
@@ -136,6 +138,6 @@ while True:
         break
 
 # By breaking the loop we run this code here which closes everything
+cap.release()
 cv2.destroyAllWindows()
-picam2.stop()
 output.off()  # Make sure to turn off the GPIO pin when exiting
